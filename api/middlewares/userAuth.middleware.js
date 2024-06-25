@@ -5,6 +5,8 @@ export const authenticateUserFromToken = (req, res, next) => {
   error.code = "C4444";
   error.message = "Unauthorized Access";
 
+  console.log("authenticator");
+
   const token = req.cookies.authToken;
 
   if (!token) {

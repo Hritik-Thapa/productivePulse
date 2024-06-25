@@ -27,7 +27,7 @@ const Modes = () => {
 
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state) => state.user);
-  const modes = currentUser.customModes;
+  const modes = currentUser?.customModes;
   console.log(modes);
 
   const handleDeleteMode = async (modeId) => {

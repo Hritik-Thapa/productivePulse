@@ -9,23 +9,20 @@ const Timer = () => {
   const [restTime, setRestTime] = useState(5);
   const location = useLocation();
   const timeData = location.state;
-  console.log(timeData);
   const [isWorking, setIsWorking] = useState(true);
+
+  let buzzer = new Audio(ringing);
 
   useEffect(() => {
     setTiming();
   }, [timeData]);
 
   const setTiming = () => {
-    console.log("setTimeing", timeData?.work, timeData?.rest);
     if (timeData) setWorkTime(timeData?.work);
     else setWorkTime(25);
     if (timeData) setRestTime(timeData?.rest);
     else setRestTime(5);
   };
-
-  console.log(`session=${workTime} rest:${restTime}`);
-  let buzzer = new Audio(ringing);
 
   function isWorkingCallBack() {
     buzzer.play();

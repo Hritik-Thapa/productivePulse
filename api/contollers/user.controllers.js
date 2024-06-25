@@ -39,7 +39,6 @@ export const addMode = async (req, res, next) => {
 export const deleteMode = async (req, res, next) => {
   const userId = req.params.id;
   const modeId = req.query.modeId;
-  console.log(req.query.modeId);
 
   if (req.params.id !== req.userId._id) {
     const error = new Error();
@@ -66,5 +65,16 @@ export const deleteMode = async (req, res, next) => {
       .json({ ...user._doc, password: undefined, salt: undefined });
   } catch (err) {
     return next(err);
+  }
+};
+
+export const logoutUser = (req, res, next) => {
+  console.log("logOut request");
+  try {
+    res.clearCookie("authToken");
+    return res.status(200).json({ success: "User Successfully Logged out" });
+  } catch (err) {
+    console.log(err);
+    next(err);
   }
 };

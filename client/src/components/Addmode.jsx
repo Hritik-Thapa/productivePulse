@@ -30,7 +30,7 @@ const Addmode = ({ close }) => {
 
     console.log(formData);
 
-    const res = await fetch(`/api/user/addMode/${currentUser._id}`, {
+    const res = await fetch(`/api/user/addMode/${currentUser?._id}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),

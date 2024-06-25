@@ -26,8 +26,9 @@ app.use("/api/user", UserRoute);
 app.use((err, req, res, next) => {
   const error = err.message;
   const success = false;
-  const statusCode = err.code || 500;
-  return res.status(statusCode).json({ error, success, statusCode });
+  const errorCode = err.code || 500;
+  console.log(err);
+  return res.status(500).json({ error, success, errorCode });
 });
 
 app.listen(PORT, () => {
