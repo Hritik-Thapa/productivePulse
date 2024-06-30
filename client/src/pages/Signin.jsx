@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { changeUser } from "../redux/user";
+import GoogleAuth from "../components/GoogleAuth";
 
 const Signin = () => {
   const navigate = useNavigate();
@@ -63,10 +64,11 @@ const Signin = () => {
           disabled={loading}
           type="button"
           onClick={handleSubmit}
-          className=" bg-customPinkDarker w-[100%] p-3 rounded-lg text-white text-2xl text-center title font-thin hover:bg-customPink border border-customPinkDarker "
+          className=" bg-customPinkDarker w-[100%] p-3 rounded-lg text-white text-xl text-center title hover:bg-customPink border border-customPinkDarker "
         >
           {loading ? "Loading" : "Sign in"}
         </button>
+        <GoogleAuth />
       </form>
       <p className="text-center text-gray-500">
         Dont have an account?{" "}

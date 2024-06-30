@@ -32,7 +32,7 @@ const Header = () => {
     }
   }
   return (
-    <header className="flex items-center justify-around mx-auto">
+    <header className="flex items-center justify-around mx-auto w-full ">
       <Link to="/">
         <p className="text-5xl text-white font-bold text-right title p-7">
           Productive<span className="text-customPinkDarker">Pulse</span>

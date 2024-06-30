@@ -62,5 +62,14 @@ userSchema.static("userAuthForToken", async function (email, password) {
   };
 });
 
+userSchema.static("authenticateFromGoogle", async function (email) {
+  const user = await this.findOne({ email });
+  const token = generateToken(user);
+  return {
+    token,
+    user: { ...user._doc, password: undefined, salt: undefined },
+  };
+});
+
 const User = model("user", userSchema);
 export default User;

@@ -10,10 +10,11 @@ export const addMode = async (req, res, next) => {
     error.code = C4444;
     next(error);
   }
+
   try {
     const user = await User.findById(userId);
     console.log(user);
-    if (user.customModes >= 5) {
+    if (user.customModes.length >= 5) {
       const error = new Error();
       error.message = "Unauthorized";
       error.code = C4444;

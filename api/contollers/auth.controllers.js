@@ -45,3 +45,17 @@ export const signin = async (req, res, next) => {
     return next(err);
   }
 };
+
+export const googleSignin = async (req, res, next) => {
+  console.log("google");
+  console.log(req.user);
+  const email = req.user.email;
+  try {
+    const user = req.user;
+    const data = await User.authenticateFromGoogle(email);
+    console.log(data);
+    return res.status(200).cookie("authToken", data.token).json(data.user);
+  } catch (err) {
+    next(err);
+  }
+};

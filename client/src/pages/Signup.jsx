@@ -70,7 +70,7 @@ const Signup = () => {
           onClick={handleSubmit}
           className=" bg-customPinkDarker w-[100%] p-3 rounded-lg text-white text-2xl text-center title font-thin hover:bg-customPink border border-customPinkDarker "
         >
-          {loading ? "Loading" : "Sign in"}
+          {loading ? "Loading" : "Sign up"}
         </button>
       </form>
       <p className="text-center text-gray-500">

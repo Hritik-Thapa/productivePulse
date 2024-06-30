@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import "reactjs-popup/dist/index.css";
 import Popup from "reactjs-popup";
-import Addmode from "./Addmode";
+import Addmode from "../components/Addmode.jsx";
 import { changeUser } from "../redux/user.js";
 
 const Modes = () => {
@@ -14,6 +14,7 @@ const Modes = () => {
 
   useEffect(() => {
     console.log("useEffect");
+
     if (location.pathname === "/signin" || location.pathname === "/signup") {
       handleDisplayChange(false);
     } else {
@@ -28,7 +29,6 @@ const Modes = () => {
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state) => state.user);
   const modes = currentUser?.customModes;
-  console.log(modes);
 
   const handleDeleteMode = async (modeId) => {
     const res = await fetch(
@@ -127,14 +127,16 @@ const Modes = () => {
                 </Link>
               );
             })}
-          <Popup
-            trigger={addButton}
-            modal
-            position="center center"
-            ref={popupRef}
-          >
-            <Addmode close={closePopup} />
-          </Popup>
+          {currentUser && (
+            <Popup
+              trigger={addButton}
+              modal
+              position="center center"
+              ref={popupRef}
+            >
+              <Addmode close={closePopup} />
+            </Popup>
+          )}
         </div>
       </div>
     </>

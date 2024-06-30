@@ -33,7 +33,7 @@ const Timer = () => {
 
   return (
     <>
-      <div className="bg-counterBg py-11  w-[50%] m-11 rounded-3xl drop-shadow h-auto">
+      <div className="bg-counterBg py-11  w-1/2 w-max-[50%]  m-11 rounded-3xl drop-shadow h-auto">
         <p className="text-white text-5xl title font-semibold text-center">
           {restTime ? (isWorking ? "Work" : "Break") : "Timer"}
         </p>

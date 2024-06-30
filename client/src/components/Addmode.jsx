@@ -25,7 +25,9 @@ const Addmode = ({ close }) => {
     e.preventDefault();
 
     if (pomo === "timer") {
+      console.log("timer");
       setFormData({ ...formData, rest: null });
+      console.log({ ...formData, rest: null });
     }
 
     console.log(formData);

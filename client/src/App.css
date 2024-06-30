@@ -42,3 +42,26 @@
     border-radius: 1rem;
     height: auto;
 }
+
+.todoList-add {
+    transform-origin: right;
+    /* direction: rtl; */
+    animation: todoList 0.5s cubic-bezier(0.38, 0.1, 0.36, 0.9) forwards;
+    /* animation-direction: reverse; */
+}
+
+@keyframes todoList {
+    0% {
+        /* scale: 0%; */
+        opacity: 0%;
+        width: 0;
+        right: 0;
+    }
+
+    100% {
+        /* scale: 100%; */
+        width: 100%;
+        opacity: 1;
+        right: auto;
+    }
+}

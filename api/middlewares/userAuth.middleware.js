@@ -16,6 +16,6 @@ export const authenticateUserFromToken = (req, res, next) => {
   jwt.verify(token, process.env.SECRET_KEY, (err, userId) => {
     if (err) return next(error);
     req.userId = userId;
-    next();
+    return next();
   });
 };
