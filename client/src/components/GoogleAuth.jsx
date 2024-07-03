@@ -47,7 +47,7 @@ const GoogleAuth = () => {
   return (
     <button
       onClick={handleSignIn}
-      className="bg-red-600 text-white rounded-lg w-[100%] p-3 text-xl title"
+      className="bg-red-800 text-white rounded-lg w-[100%] p-3 text-xl title"
     >
       Sign in with Google
     </button>

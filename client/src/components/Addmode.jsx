@@ -1,16 +1,19 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { changeUser } from "../redux/user.js";
+import { useNavigate } from "react-router-dom";
 const Addmode = ({ close }) => {
   const { currentUser } = useSelector((state) => state.user);
   const dispatch = useDispatch();
+
+  const navigate=useNavigate();
 
   const [formData, setFormData] = useState({
     work: 25,
     rest: 5,
   });
   const [pomo, setPomo] = useState("pomodoro");
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
 
   function handleTimeChange(e) {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -18,19 +21,12 @@ const Addmode = ({ close }) => {
   }
   function handleTypeChange(e) {
     setPomo(e.target.value);
+    if( pomo==="pomodoro" )setFormData({...formData, rest: null})
     console.log(pomo);
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
-
-    if (pomo === "timer") {
-      console.log("timer");
-      setFormData({ ...formData, rest: null });
-      console.log({ ...formData, rest: null });
-    }
-
-    console.log(formData);
 
     const res = await fetch(`/api/user/addMode/${currentUser?._id}`, {
       method: "POST",
@@ -41,12 +37,14 @@ const Addmode = ({ close }) => {
     try {
       const data = await res.json();
       if (data.success === false) {
-        setError(true);
+        setError(data.message);
+        return
       }
       dispatch(changeUser(data));
       close();
     } catch (err) {
-      setError(true);
+      if(err.errorCode==="C444") navigate('/singin')
+      setError(err.message);
     }
   }
 
@@ -96,6 +94,7 @@ const Addmode = ({ close }) => {
         >
           Add Mode
         </button>
+      {error && (<p className="text-red-700 text-center p-2">{error}</p>)}
       </form>
     </div>
   );

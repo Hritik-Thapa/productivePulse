@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import GoogleAuth from "../components/GoogleAuth";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -68,10 +69,11 @@ const Signup = () => {
           disabled={loading}
           type="button"
           onClick={handleSubmit}
-          className=" bg-customPinkDarker w-[100%] p-3 rounded-lg text-white text-2xl text-center title font-thin hover:bg-customPink border border-customPinkDarker "
+          className=" bg-customPinkDarker w-[100%] p-3 rounded-lg text-white text-xl text-center title hover:bg-customPink border border-customPinkDarker "
         >
           {loading ? "Loading" : "Sign up"}
         </button>
+        <GoogleAuth/>
       </form>
       <p className="text-center text-gray-500">
         Already have an account?{" "}

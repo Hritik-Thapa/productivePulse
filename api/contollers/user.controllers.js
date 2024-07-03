@@ -7,8 +7,8 @@ export const addMode = async (req, res, next) => {
   if (req.params.id !== req.userId._id) {
     const error = new Error();
     error.message = "Unauthorized";
-    error.code = C4444;
-    next(error);
+    error.code = 'C4444';
+    return next(error);
   }
 
   try {
@@ -16,8 +16,7 @@ export const addMode = async (req, res, next) => {
     console.log(user);
     if (user.customModes.length >= 5) {
       const error = new Error();
-      error.message = "Unauthorized";
-      error.code = C4444;
+      error.message = "Too many custom modes.";
       return next(error);
     }
 

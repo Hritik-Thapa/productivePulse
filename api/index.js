@@ -24,11 +24,10 @@ app.use("/api/auth", AuthRoute);
 app.use("/api/user", UserRoute);
 
 app.use((err, req, res, next) => {
-  const error = err.message;
+  const message = err.message;
   const success = false;
   const errorCode = err.code || 500;
-  console.log(err);
-  return res.status(500).json({ error, success, errorCode });
+  return res.status(500).json({ message, success, errorCode });
 });
 
 app.listen(PORT, () => {
