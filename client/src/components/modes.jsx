@@ -106,7 +106,7 @@ const Modes = () => {
               // console.log(typeof mode.rest);
               return (
                 <Link
-                  to="/"
+                  to={mode.rest?"/":"/timer"}
                   state={{ work: mode.work, rest: mode.rest }}
                   key={mode._id}
                   className="border-white py-2 px-8 border title text-white text-xl hover:bg-modesHover hover:scale w-full customModeBtn flex flex-col items-center relative"

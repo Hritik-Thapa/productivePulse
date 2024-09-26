@@ -4,10 +4,10 @@ import { Stopwatch, Timer, Clock, Header, Modes } from "./components";
 import Signin from "./pages/Signin";
 import Signup from "./pages/Signup";
 import "./App.css";
-import Todolist from "./conatainers/todolist";
+import Todolist from "./containers/todolist";
+import Pomodoro from "./components/Pomodoro";
 
 function App() {
-  const [count, setCount] = useState(0);
 
   return (
     <BrowserRouter>
@@ -17,7 +17,7 @@ function App() {
           <Routes>
             <Route path="/signin" element={<Signin />} />
             <Route path="/signup" element={<Signup />} />
-            <Route path="/" element={<Timer />} />
+            <Route path="/" element={<Pomodoro />} />
             <Route path="/timer" element={<Timer />} />
 
             <Route path="/stopwatch" element={<Stopwatch />} />

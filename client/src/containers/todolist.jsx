@@ -13,7 +13,7 @@ const Todolist = () => {
   useEffect(() => {
     console.log("useEffect from todolist");
     if (location.pathname === "/signin" || location.pathname === "/signup") {
-      handleDisplayChange(false);
+      handleDisplayChange(false); 
     } else {
       handleDisplayChange(true);
     }
@@ -102,9 +102,9 @@ const Todolist = () => {
         {isAdding ? "" : <span className=" h-10 w-10">+</span>}
       </button>
 
-      {/* {listError && (
+         {listError && (
         <p className="text-red-700 text-center">Error fetching todo list</p>
-      )} */}
+      )} 
     </div>
   );
 };

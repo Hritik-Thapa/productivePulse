@@ -40,6 +40,7 @@ const Stopwatch = () => {
     const pausedTimeSec =
       pausedTime.hours * 3600 + pausedTime.minutes * 60 + pausedTime.sec;
     const time = new Date(currentTime - startTime) / 1000 || 0;
+    console.log(time)
     const timeInSeconds = pausedTimeSec + time;
 
     displayTime.sec = Math.floor((timeInSeconds % 3600) % 60) || 0;

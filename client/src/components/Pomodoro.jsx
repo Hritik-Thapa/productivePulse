@@ -4,42 +4,55 @@ import ringing from "../resources/ringing.mp3";
 import { useLocation } from "react-router-dom";
 // import "./timer.css";
 
-const Timer = () => {
+const Pomodoro = () => {
   const location = useLocation();
   const timeData = location.state;
 
   const [workTime, setWorkTime] = useState(25);
-
+  const [restTime, setRestTime] = useState(5);
+  const [isWorking, setIsWorking] = useState(true);
+  const [toContinue, setToContinue]=useState(false)
   let buzzer = new Audio(ringing);
 
   useEffect(() => {
+    console.log('timechange useeffect')
     setTiming();
+    console.log(timeData);
     return ()=>{
       console.log('useeffect cleanup')
+      
     }
   }, [timeData]);
 
   const setTiming = () => {
     if (timeData) setWorkTime(timeData?.work);
+    if (timeData) setRestTime(timeData?.rest);
   };
 
-  function timerCallback() {
+  function isWorkingCallBack() {
     buzzer.play();
+    if (restTime) {
+      console.log('callback')
+      setIsWorking(!isWorking);
+      setToContinue(true)
+    }
   }
   return (
     <>
       <div className="bg-counterBg py-11  w-1/2 w-max-[50%]  m-11 rounded-3xl drop-shadow h-auto">
         <p className="text-white text-5xl title font-semibold text-center">
-          Timer
+          {restTime ? (isWorking ? "Work" : "Break") : "Timer"}
         </p>
+        {console.log(isWorking,toContinue)}
         <Countdown
-          time={workTime}
-          statusChange={timerCallback}
-          toContinue={false}
+          time={isWorking ? workTime : restTime}
+          statusChange={isWorkingCallBack}
+          toContinue={toContinue}
+          isWorking={isWorking}
         />
       </div>
     </>
   );
 };
 
-export default Timer;
+export default Pomodoro;
