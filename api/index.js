@@ -8,6 +8,7 @@ import mongoose from "mongoose";
 
 import AuthRoute from "./routes/auth.routes.js";
 import UserRoute from "./routes/user.routes.js";
+import TodosRoute from "./routes/todos.route.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -22,6 +23,7 @@ app.use(cookieParser());
 
 app.use("/api/auth", AuthRoute);
 app.use("/api/user", UserRoute);
+app.use("/api/todolist",TodosRoute)
 
 app.use((err, req, res, next) => {
   const message = err.message;

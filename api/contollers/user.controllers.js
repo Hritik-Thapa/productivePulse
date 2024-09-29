@@ -1,10 +1,12 @@
 import User from "../models/user.models.js";
 
 export const addMode = async (req, res, next) => {
+
+
   const userId = req.params.id;
   const { work, rest } = req.body;
 
-  if (req.params.id !== req.userId._id) {
+  if (req.params.id !== req.userId) {
     const error = new Error();
     error.message = "Unauthorized";
     error.code = 'C4444';
@@ -37,10 +39,12 @@ export const addMode = async (req, res, next) => {
 };
 
 export const deleteMode = async (req, res, next) => {
+
+
   const userId = req.params.id;
   const modeId = req.query.modeId;
 
-  if (req.params.id !== req.userId._id) {
+  if (req.params.id !== req.userId) {
     const error = new Error();
     error.message = "Unauthorized";
     error.code = C4444;
@@ -69,6 +73,7 @@ export const deleteMode = async (req, res, next) => {
 };
 
 export const logoutUser = (req, res, next) => {
+
   console.log("logOut request");
   try {
     res.clearCookie("authToken");

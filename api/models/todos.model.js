@@ -1,4 +1,5 @@
 import mongoose, { model, Schema } from "mongoose";
+import User from "./user.models";
 
 const todoSchema = new Schema(
   {
@@ -11,15 +12,13 @@ const todoSchema = new Schema(
         task: { type: String, required: true },
         completed: { type: Boolean, default: false },
         deadline: { type: Date },
-        created_at: { type: Date, required: true },
+        createdAt: { type: Date, required: true },
         estimatedTime: { type: Number },
         timeSpent: { type: Number, default: 0 },
         repeat: {
-          interval: {
             type: String,
-            enum: ["DAILY", "WEEKLY", "MONTHLY"],
-            default: null,
-          },
+            enum: ["DAILY", "WEEKLY", "MONTHLY","NONE"],
+            default: "NONE",
         },
       },
     ],

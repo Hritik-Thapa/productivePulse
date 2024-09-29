@@ -1,4 +1,7 @@
 import User from "../models/user.models.js";
+import Stats from "../models/stats.model.js";
+import TodoList from "../models/todos.model.js";
+
 import { createHmac, randomBytes } from "crypto";
 
 export const googleAuthenticator = async (req, res, next) => {
@@ -20,6 +23,13 @@ export const googleAuthenticator = async (req, res, next) => {
       salt,
       username,
     });
+    try{
+
+      const todo = await TodoList.create({createdBy:newUser._id,list:[]});
+      const stats = await Stats.create({createdBy:newUser._id,stats:{}});
+    }catch(err){
+      console.log(err)
+    }
     req.user = newUser;
   } else {
     req.user = user;

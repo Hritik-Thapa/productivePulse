@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
-import { Stopwatch, Timer, Clock, Header, Modes } from "./components";
+import { Stopwatch, Timer, Clock, Header } from "./components";
+import Modes from "./containers/modes";
 import Signin from "./pages/Signin";
 import Signup from "./pages/Signup";
 import "./App.css";

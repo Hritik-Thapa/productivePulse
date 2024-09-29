@@ -17,8 +17,8 @@ export const signup = async (req, res, next) => {
       email,
       password,
     });
-    const todoList = await TodoList.create({});
-    const stats = await Stats.create({});
+    const todo = await TodoList.create({createdBy:user._id,list:[]});
+    const stats = await Stats.create({createdBy:user_id,stats:{}});
     return res.status(200).json({ success: "success" });
   } catch (err) {
     if (err.code === 11000) {
