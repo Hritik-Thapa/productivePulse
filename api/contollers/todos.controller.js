@@ -13,11 +13,8 @@ export const getTodoList = async (req, res, next) => {
         return next(error);
     }
 
-
-
     try {
         const todos = await TodoList.findOne({ createdBy: userId });
-        console.log(todos.list)
         return res.status(200).json(todos);
     }
     catch (err) {
@@ -33,8 +30,7 @@ export const addListing = async (req, res, next) => {
     console.log(todo)
     console.log("Add listing")
     try {
-        const listing = await TodoList.findOneAndUpdate({ createdBy: userId }, { $push: { list: { task: todo.title, completed: false, deadline: todo.deadline, createdAt: todo.createdAt, estimatedTime: todo.estimatedTime, repeat: todo.repeat } } });
-        console.log(listing);
+        const listing = await TodoList.findOneAndUpdate({ createdBy: userId }, { $push: { list: { task: todo.task, completed: false, deadline: todo.deadline, createdAt: todo.createdAt, estimatedTime: todo.estimatedTime, repeat: todo.repeat } } });
         return res.status(200).json(listing);
     }
     catch (err) {
@@ -43,40 +39,44 @@ export const addListing = async (req, res, next) => {
 }
 
 export const deleteListing = async (req, res, next) => {
-
+    console.log("delete")
     const userId = req.userId;
     const listingId = req.params.id;
     try {
 
         const updatedList = await TodoList.updateOne({ createdBy: userId }, { $pull: { list: { _id: listingId } } });
-        return res.status(204);
+        return res.status(200);
     }
     catch (err) {
+        console.log(err)
         next(err);
     }
 }
 
-export const editListing = async (req, rex, next) => {
+export const editListing = async (req, res, next) => {
     const userId = req.userId;
     const listingId = req.params.id;
     const todo = req.body;
+    console.log("todoList", todo)
     try {
         const update = {
             $set: {
-                'list.$[list].task': todo.title,
-                'list.$[list].completed': todo.completed,
-                'list.$[list].deadline': todo.deadline,
-                'list.$[list].estimatedTime': todo.estimatedTime,
-                'list.$[list].repeat': todo.repeat
+                'list.$[element].task': todo.task,
+                'list.$[element].completed': todo.completed,
+                'list.$[element].deadline': todo.deadline,
+                'list.$[element].estimatedTime': todo.estimatedTime,
+                'list.$[element].repeat': todo.repeat
             }
         }
         const filter = {
-            arrayFilters: [{ '_id': listingId }]
+            arrayFilters: [{ 'element._id': listingId }]
         }
         const updatedList = await TodoList.updateOne({ createdBy: userId }, update, filter);
         return res.status(200).json(updatedList);
     }
     catch (err) {
+        console.log(err)
+
         return next(err);
     }
 }

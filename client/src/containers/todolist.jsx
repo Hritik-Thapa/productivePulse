@@ -10,26 +10,15 @@ const Todolist = () => {
   const [todoList, setTodoList] = useState([]);
   const [listError, setListError] = useState("");
   const [isAdding, setIsAdding] = useState(false);
-  const [isEditing, setIsEditing]=useState("");
+  const [isEditing, setIsEditing] = useState("");
 
-  const date=new Date();
-  const isoDate=date.toISOString().substring(0,10);
-  console.log(isoDate)
-
-  const [newTaskData, setNewTaskData] = useState({
-    title: "",
-    completed:false,
-    createdAt:isoDate,
-    deadline:isoDate,
-    estimatedTime:-1,
-    timeSpent:0,
-    repeat:"NONE"
-  });
+  const date = new Date();
+  const isoDate = date.toISOString().substring(0, 10);
 
   useEffect(() => {
     console.log("useEffect from todolist");
     if (location.pathname === "/signin" || location.pathname === "/signup") {
-      handleDisplayChange(false); 
+      handleDisplayChange(false);
     } else {
       handleDisplayChange(true);
     }
@@ -44,70 +33,26 @@ const Todolist = () => {
     fetchTodoList();
   }, []);
 
-  // Add Listing
-
-  const handleAddTodo=async ()=>{
-    console.log("Add")
-    setIsAdding(false);
-    const res= await fetch('/api/todolist/addListing',{
-      method:'POST',
-      body:JSON.stringify(newTaskData),
-      headers: { "Content-Type": "application/json" },
-    })
-    try{
-      const data=await res.json();
-      if(data.success===false)
-        setListError(data.messsage);
-      else
-        fetchTodoList();
-
-    }catch(err){
-      setListError("Error Adding Todo");
-    }
-  }
-
   //Delete todo
 
-  const handleDelete= async (id)=>{
+  const handleDelete = async (id) => {
     console.log(id)
-    const res=await fetch(`/api/todoList/delete/${id}`,{
-      method:"DELETE"
+    const res = await fetch(`/api/todoList/delete/${id}`, {
+      method: "DELETE"
     })
-    res.json().then(response=>{
-      if(response.errorCode==="C444")
+    res.json().then(response => {
+      if (response.errorCode === "C444")
         setListError(response.messsage)
-      else if(response.success===false)
+      else if (response.success === false)
         setListError("Couldn't Delete Message");
-      else{
+      else {
         fetchTodoList();
         setListError("");
       }
-    }).catch(err=>{
+    }).catch(err => {
       setListError("Error Deleting Todo");
     })
   }
-
-  //Edit Todo
-
-  const handleEdit=async(id)=>{
-    const res=await fetch(`/api/todoList/edit/${id}`,
-      {
-        method:'PUT',
-        data:JSON.stringify(newTaskData),
-        headers: { "Content-Type": "application/json" },
-      }
-    )
-    res.json().then(response=>{
-      if(response.success===false)
-        setListError("Error Editing Todo");
-      else if(response.success===false)
-        setListError("Couldn't Delete Message");
-      else{
-        fetchTodoList();
-        setListError("");
-    }})
-  }
-
   // fetchList
 
   const fetchTodoList = async () => {
@@ -121,11 +66,11 @@ const Todolist = () => {
           return
         }
         console.log(response)
-          console.log('response ok')
-          setTodoList(response.list);
-          setListError("");
-          console.log(todoList)
-          return
+        console.log('response ok')
+        setTodoList(response.list);
+        setListError("");
+        console.log(todoList)
+        return
       })
       .catch((err) => {
         console.log(err)
@@ -136,88 +81,171 @@ const Todolist = () => {
 
   // Form to add or edit todo
 
-  const AddForm=(task)=>{
-    const todo=task?.task;
-    console.log(task)
-    return(<form className="flex flex-col justify-around p-3 gap-3 todoList-add w-full items-center">
+  const AddForm = (currentTodo) => {
+
+    // Add Listing
+
+    const handleAddTodo = async () => {
+      console.log("Add")
+      setIsAdding(false);
+      const res = await fetch('/api/todolist/addListing', {
+        method: 'POST',
+        body: JSON.stringify(newTaskData),
+        headers: { "Content-Type": "application/json" },
+      })
+      try {
+        const data = await res.json();
+        if (data.success === false)
+          setListError(data.messsage);
+        else
+          fetchTodoList();
+
+      } catch (err) {
+        setListError("Error Adding Todo");
+      }
+    }
+
+    //Edit Todo
+
+    const handleEdit = async (id) => {
+
+      const res = await fetch(`/api/todoList/edit/${id}`,
+        {
+          method: 'PUT',
+          body: JSON.stringify(newTaskData),
+          headers: { "Content-Type": "application/json" },
+        }
+      )
+      res.json().then(response => {
+        if (response.success === false)
+          setListError("Error Editing Todo");
+        else if (response.success === false)
+          setListError("Couldn't Delete Message");
+        else {
+          fetchTodoList();
+          setListError("");
+          setIsEditing("");
+        }
+      })
+    }
+
+    const [newTaskData, setNewTaskData] = useState({});
+    const todo = currentTodo?.currentTodo;
+
+    useEffect(() => {
+      setStates();
+    }, [isAdding, isEditing])
+
+
+    const setStates = () => {
+      if (currentTodo.currentTodo) {
+        setNewTaskData({ ...todo, deadline: todo.deadline?.substring(0, 10) })
+        console.log(isEditing)
+      }
+      else {
+        setNewTaskData({
+          task: "",
+          completed: false,
+          createdAt: isoDate,
+          deadline: isoDate,
+          estimatedTime: -1,
+          timeSpent: 0,
+          repeat: "NONE",
+          _id: null
+        })
+      }
+    }
+
+    return (<form className="flex flex-col justify-around p-3 gap-3 todoList-add w-full items-center">
       <input
         type="text"
-        id="title"
+        id="task"
         className=" rounded-lg border-2 w-4/5 p-2 focus:outline-none "
         placeholder="Title"
-        defaultValue={todo.task||""}
+        value={newTaskData.task}
         required
         onChange={(e) => {
           setNewTaskData({ ...newTaskData, [e.target.id]: e.target.value });
         }}
       />
-      <label className="text-white text-xl "
-        
-      >Deadline</label>
-      <input type="date" className=" rounded-lg border-2 w-4/5 p-2 focus:outline-none " 
-      id="deadline"
-      min={isoDate}
-      defaultValue={todo.deadline||isoDate}
-      onChange={(e)=>{
-        setNewTaskData({ ...newTaskData, [e.target.id]: e.target.value });
-      }}/>
+
+      <label className="text-white text-xl ">Deadline</label>
+      <input type="date" className=" rounded-lg border-2 w-4/5 p-2 focus:outline-none "
+        id="deadline"
+        min={isoDate}
+        value={newTaskData.deadline}
+        onChange={(e) => {
+          setNewTaskData({ ...newTaskData, [e.target.id]: e.target.value });
+        }} />
 
       <label className="text-white text-xl ">Estimated hours to finish </label>
       <input type="number" placeholder="Leave this empty if you dont have estimation" className=" rounded-lg border-2 w-4/5 p-2  focus:outline-none"
-      id="estimatedTime"
-      defaultValue={todo.estimatedTime||null}
-      onChange={(e)=>{
-        setNewTaskData({ ...newTaskData, [e.target.id]: e.target.value });
-      }} /> 
+        id="estimatedTime"
+        value={newTaskData.estimatedTime}
+        onChange={(e) => {
+          setNewTaskData({ ...newTaskData, [e.target.id]: e.target.value });
+        }} />
 
       <label className="text-white text-xl focus:outline-none ">Repetion</label>
       <select className=" rounded-lg border-2 w-4/5 p-2 focus:outline-none "
-      id="repeat"
-      defaultValue={todo.repeat||""}
-      onChange={(e)=>{
-        setNewTaskData({ ...newTaskData, [e.target.id]: e.target.value });
-        console.log(newTaskData)
-      }}>
+        id="repeat"
+        value={newTaskData.repeat}
+        onChange={(e) => {
+          setNewTaskData({ ...newTaskData, [e.target.id]: e.target.value });
+          console.log(newTaskData)
+        }}>
         <option value={"NONE"}>None</option>
         <option value={"DAILY"}>Daily</option>
         <option value={"WEEKLY"}>Weekly</option>
         <option value={"MONTHLY"}>Monthly</option>
       </select>
-      <button
-        className="rounded-lg border-2  py-2 px-4 text-white focus:outline-none hover:bg-background"
-        type="button"
-        onClick={task?()=>handleEdit(todo._id):handleAddTodo}
-      >
-        {task?"Edit":"Add"}
-      </button>
+      <div className="flex gap-5">
+        <button
+          className="rounded-lg border-2  py-2 px-4 text-white focus:outline-none hover:bg-background"
+          type="button"
+          onClick={currentTodo.currentTodo ? () => handleEdit(todo._id) : handleAddTodo}
+        >
+          {currentTodo.currentTodo ? "Edit" : "Add"}
+        </button>
+        <button
+          className="rounded-lg border-2  py-2 px-4 text-white focus:outline-none hover:bg-background"
+          type="button"
+          onClick={() => {
+            setIsAdding(false)
+            setIsEditing("")
+          }}
+        >
+          Cancel
+        </button>
+      </div>
     </form>)
   }
 
   if (!toDisplay) return null;
 
 
-  const RemainingDays=(date)=>{
-    if(date<isoDate)
+  const RemainingDays = (date) => {
+    if (date < isoDate)
       return (<p className="text-red-700">{date}</p>)
-    else if(date=isoDate)
-      return (<p className="text-red-500">0 Days Remaining</p>)
-    else{
-      if(date.substring(0,4)!==isoDate.substring(0,4))
+    else if (date = isoDate)
+      return (<p className="text-red-500">0 Days </p>)
+    else {
+      if (date.substring(0, 4) !== isoDate.substring(0, 4))
         return (<p className="text-green-600">{date}</p>)
-      if(date.substring(6,2)!==isoDate.substring(0,7))
+      if (date.substring(6, 2) !== isoDate.substring(0, 7))
         return (<p className="text-green-600">{date}</p>)
-      const days=Number(date.substring(9,2))-Number(isoDate.substring(9,2))
-      if( days<7){
-        return (<p className="text-yellow-600">{days} Days Remaining</p>)
+      const days = Number(date.substring(9, 2)) - Number(isoDate.substring(9, 2))
+      if (days < 7) {
+        return (<p className="text-yellow-600">{days} Days </p>)
       }
-      else if(days<3){
-        return (<p className="text-orange-600">{days} Days Remaining</p>)
+      else if (days < 3) {
+        return (<p className="text-orange-600">{days} Days </p>)
       }
     }
   }
 
   return (
-    <div className="rounded-lg border-2 w-4/5 m-7 relative flex flex-col items-center">
+    <div className="rounded-lg border-2 w-4/5 m-7 relative flex flex-col items-start">
       <h1 className="p-3 text-center text-white text-3xl font-semibold title border w-full">
         ToDo List
       </h1>
@@ -226,57 +254,63 @@ const Todolist = () => {
 
       {todoList && todoList.length > 0 && (
         <div className="w-[100%]">
-          {/* <p>{todoList.length}</p> */}
           {todoList.map((todo) => {
-            console.log(todo)
             return (
-            <div className="flex w-[80%] flex-row m-2 p-2 items-center  justify-around bg-customPink rounded-lg">
-              {isEditing===todo._id?<AddForm task={todo}/>:
-              <h1 className="text-white text-xl  w-[400px]">{todo.task}</h1>
-              }
-              <div  className="flex gap-4  w-[200px] justify-end">
+              <div className="w-[80%] bg-customPink m-2 p-2 rounded-lg">
+                {isEditing === todo._id ? <AddForm currentTodo={todo} /> :
+                  <div className="flex  flex-row  items-center  justify-around  ">
 
-              {todo.repeat==="NONE"?<RemainingDays/>:""}
+                    <h1 className="text-white text-xl  w-[400px]">{todo.task}</h1>
+                    <div className="flex gap-4  w-[200px] justify-end">
 
-              <input type="checkbox" value={todo.completed}/>
-              
-              <Popup trigger={open=(
-                <div className=" relative h-[20px] w-[5px] m-0  cursor-pointer p-1">
-                  <div className="absolute top-[10%] left-[50%] h-[3px] w-[3px] bg-white rounded-full"></div>
-                  <div className="absolute top-[50%] left-[50%] h-[3px] w-[3px] bg-white rounded-full"></div>
-                  <div className="absolute top-[90%] left-[50%] h-[3px] w-[3px] bg-white rounded-full"></div>
-                </div>
+                      {todo.repeat === "NONE" ? <RemainingDays /> : ""}
 
-            )}
-              position={"bottom center"}
-              closeOnDocumentClick
-            >
-              <ul className="bg-background p-2">
-                <li className="hover:bg-customPink cursor-pointer text-white p-1 rounded-md text-center" onClick={()=>handleDelete(todo._id)}>Delete</li>
-                <li className="hover:bg-customPink cursor-pointer text-white p-1 rounded-md text-center" onClick={()=>setIsEditing(`${todo._id}`)}>Edit</li>
-              </ul>
-              </Popup>
+                      <input type="checkbox" value={todo.completed} />
+
+                      <Popup trigger={open = (
+                        <div className=" relative h-[20px] w-[5px] m-0  cursor-pointer p-1">
+                          <div className="absolute top-[10%] left-[50%] h-[3px] w-[3px] bg-white rounded-full"></div>
+                          <div className="absolute top-[50%] left-[50%] h-[3px] w-[3px] bg-white rounded-full"></div>
+                          <div className="absolute top-[90%] left-[50%] h-[3px] w-[3px] bg-white rounded-full"></div>
+                        </div>
+
+                      )}
+                        position={"bottom center"}
+                        closeOnDocumentClick
+                      >
+                        <ul className="bg-background p-2">
+                          <li className="hover:bg-customPink cursor-pointer text-white p-1 rounded-md text-center" onClick={() => handleDelete(todo._id)}>Delete</li>
+                          <li className="hover:bg-customPink cursor-pointer text-white p-1 rounded-md text-center" onClick={() => {
+                            setIsEditing(`${todo._id}`);
+                            setIsAdding(false)
+                          }}>Edit</li>
+                        </ul>
+                      </Popup>
+                    </div>
+                  </div>
+                }
               </div>
-            </div>)
+            )
           })}
         </div>
       )}
 
-      {/* if not list */}
+      {/* if no list */}
 
       {!todoList ||
         (!isAdding && todoList.length < 1 && (
-          <p className="text-center text-white text-lg p-3">
-            {console.log(currentUser)}
+          <p className="text-center text-white text-lg p-3 w-full">
             {currentUser
               ? "No tasks yet. Add one to get started."
               : "Please login to add tasks"}
           </p>
         ))}
 
-        {/* Add form */}
+      {/* Add form */}
 
-      {isAdding && (<AddForm/>)}
+      {isAdding && (<div className="w-[80%] flex justify-start border border-white rounded-lg p-3 m-3">
+        <AddForm currentTodo={null} />
+      </div>)}
 
       {/* Add '+' button */}
 
@@ -285,6 +319,7 @@ const Todolist = () => {
         id="addButton"
         onClick={() => {
           setIsAdding(true);
+          setIsEditing("");
         }}
       >
         {isAdding ? "" : <span className=" h-10 w-10">+</span>}
@@ -292,9 +327,9 @@ const Todolist = () => {
 
       {/* errors */}
 
-         {listError && (
-        <p className="text-red-700 text-center">{listError}</p>
-      )} 
+      {listError && (
+        <p className="text-red-700 text-center w-full">{listError}</p>
+      )}
     </div>
   );
 };
