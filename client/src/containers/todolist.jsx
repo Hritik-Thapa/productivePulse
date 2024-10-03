@@ -221,6 +221,25 @@ const Todolist = () => {
     </form>)
   }
 
+  //handle todo completion
+
+  const handleCompletion = (id) => {
+    fetch(`/api/todoList/complete/${id}`, {
+      method: "PUT",
+    }).then(res => {
+      if (res.ok) {
+        console.log("Todo completed")
+        setListError("");
+      }
+      else {
+        setListError("Error completing todo")
+      }
+      fetchTodoList();
+    }).catch(err => {
+      setListError("Error completing todo")
+    })
+  }
+
   if (!toDisplay) return null;
 
 
@@ -255,42 +274,43 @@ const Todolist = () => {
       {todoList && todoList.length > 0 && (
         <div className="w-[100%]">
           {todoList.map((todo) => {
-            return (
-              <div className="w-[80%] bg-customPink m-2 p-2 rounded-lg">
-                {isEditing === todo._id ? <AddForm currentTodo={todo} /> :
-                  <div className="flex  flex-row  items-center  justify-around  ">
+            if (!todo.completed)
+              return (
+                <div className="w-[80%] bg-customPink m-2 p-2 rounded-lg">
+                  {isEditing === todo._id ? <AddForm currentTodo={todo} /> :
+                    <div className="flex  flex-row  items-center  justify-around  ">
 
-                    <h1 className="text-white text-xl  w-[400px]">{todo.task}</h1>
-                    <div className="flex gap-4  w-[200px] justify-end">
+                      <h1 className="text-white text-xl  w-[400px]">{todo.task}</h1>
+                      <div className="flex gap-4  w-[200px] justify-end">
 
-                      {todo.repeat === "NONE" ? <RemainingDays /> : ""}
+                        {todo.repeat === "NONE" ? <RemainingDays /> : ""}
 
-                      <input type="checkbox" value={todo.completed} />
+                        <input type="checkbox" onClick={() => handleCompletion(todo._id)} />
 
-                      <Popup trigger={open = (
-                        <div className=" relative h-[20px] w-[5px] m-0  cursor-pointer p-1">
-                          <div className="absolute top-[10%] left-[50%] h-[3px] w-[3px] bg-white rounded-full"></div>
-                          <div className="absolute top-[50%] left-[50%] h-[3px] w-[3px] bg-white rounded-full"></div>
-                          <div className="absolute top-[90%] left-[50%] h-[3px] w-[3px] bg-white rounded-full"></div>
-                        </div>
+                        <Popup trigger={open = (
+                          <div className=" relative h-[20px] w-[5px] m-0  cursor-pointer p-1">
+                            <div className="absolute top-[10%] left-[50%] h-[3px] w-[3px] bg-white rounded-full"></div>
+                            <div className="absolute top-[50%] left-[50%] h-[3px] w-[3px] bg-white rounded-full"></div>
+                            <div className="absolute top-[90%] left-[50%] h-[3px] w-[3px] bg-white rounded-full"></div>
+                          </div>
 
-                      )}
-                        position={"bottom center"}
-                        closeOnDocumentClick
-                      >
-                        <ul className="bg-background p-2">
-                          <li className="hover:bg-customPink cursor-pointer text-white p-1 rounded-md text-center" onClick={() => handleDelete(todo._id)}>Delete</li>
-                          <li className="hover:bg-customPink cursor-pointer text-white p-1 rounded-md text-center" onClick={() => {
-                            setIsEditing(`${todo._id}`);
-                            setIsAdding(false)
-                          }}>Edit</li>
-                        </ul>
-                      </Popup>
+                        )}
+                          position={"bottom center"}
+                          closeOnDocumentClick
+                        >
+                          <ul className="bg-background p-2">
+                            <li className="hover:bg-customPink cursor-pointer text-white p-1 rounded-md text-center" onClick={() => handleDelete(todo._id)}>Delete</li>
+                            <li className="hover:bg-customPink cursor-pointer text-white p-1 rounded-md text-center" onClick={() => {
+                              setIsEditing(`${todo._id}`);
+                              setIsAdding(false)
+                            }}>Edit</li>
+                          </ul>
+                        </Popup>
+                      </div>
                     </div>
-                  </div>
-                }
-              </div>
-            )
+                  }
+                </div>
+              )
           })}
         </div>
       )}

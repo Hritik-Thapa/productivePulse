@@ -80,3 +80,25 @@ export const editListing = async (req, res, next) => {
         return next(err);
     }
 }
+
+export const listingComplete = async (req, res, next) => {
+    const userId = req.userId;
+    const listingId = req.params.id;
+    console.log(listingId)
+    try {
+        const update = {
+            $set: {
+                'list.$[element].completed': true,
+            }
+        }
+        const filter = {
+            arrayFilters: [{ 'element._id': listingId }]
+        }
+        const updatedList = await TodoList.updateOne({ createdBy: userId }, update, filter);
+        return res.status(200).json(updatedList);
+    }
+    catch (err) {
+
+        return next(err);
+    }
+}
