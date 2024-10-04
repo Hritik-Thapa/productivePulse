@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import Popup from "reactjs-popup";
+import DragSpot from "../components/DragSpot";
 
 
 const Todolist = () => {
@@ -11,6 +12,7 @@ const Todolist = () => {
   const [listError, setListError] = useState("");
   const [isAdding, setIsAdding] = useState(false);
   const [isEditing, setIsEditing] = useState("");
+  const [activeTodo, setActiveTodo] = useState(null)
 
   const date = new Date();
   const isoDate = date.toISOString().substring(0, 10);
@@ -240,8 +242,6 @@ const Todolist = () => {
     })
   }
 
-  if (!toDisplay) return null;
-
 
   const RemainingDays = (date) => {
     if (date < isoDate)
@@ -263,94 +263,108 @@ const Todolist = () => {
     }
   }
 
+  const onTodoDrop = (index) => {
+    const todo = todoList[activeTodo]
+    console.log(activeTodo)
+    const updatedTodoList = todoList.filter((todo, i) => i !== activeTodo)
+    console.log(index, updatedTodoList)
+    updatedTodoList.splice(index, 0, { ...todo })
+    setTodoList(updatedTodoList)
+  }
+
   return (
-    <div className="rounded-lg border-2 w-4/5 m-7 relative flex flex-col items-start">
-      <h1 className="p-3 text-center text-white text-3xl font-semibold title border w-full">
-        ToDo List
-      </h1>
+    toDisplay ?
+      <div className="rounded-lg border-2 w-4/5 m-7 relative flex flex-col items-start">
+        <h1 className="p-3 text-center text-white text-3xl font-semibold title border w-full">
+          ToDo List
+        </h1>
 
-      {/* List */}
+        {/* List */}
 
-      {todoList && todoList.length > 0 && (
-        <div className="w-[100%]">
-          {todoList.map((todo) => {
-            if (!todo.completed)
-              return (
-                <div className="w-[80%] bg-customPink m-2 p-2 rounded-lg">
-                  {isEditing === todo._id ? <AddForm currentTodo={todo} /> :
-                    <div className="flex  flex-row  items-center  justify-around  ">
+        {todoList && todoList.length > 0 && (
+          <div className="w-[100%]">
+            <DragSpot onDrop={() => onTodoDrop(0)} />
+            {todoList.map((todo, index) => {
+              if (!todo.completed)
+                return (
+                  <>
+                    <div className="w-[80%] bg-customPink p-2 ml-4 rounded-lg active:opacity-0.7 active:cursor-grab cursor-pointer" draggable onDragStart={() => setActiveTodo(index)} onDragEnd={() => setActiveTodo(null)}>
+                      {isEditing === todo._id ? <AddForm currentTodo={todo} /> :
+                        <div className="flex  flex-row  items-center  justify-around  ">
 
-                      <h1 className="text-white text-xl  w-[400px]">{todo.task}</h1>
-                      <div className="flex gap-4  w-[200px] justify-end">
+                          <h1 className="text-white text-xl  w-[400px]">{todo.task}</h1>
+                          <div className="flex gap-4  w-[200px] justify-end">
 
-                        {todo.repeat === "NONE" ? <RemainingDays /> : ""}
+                            {todo.repeat === "NONE" ? <RemainingDays /> : ""}
 
-                        <input type="checkbox" onClick={() => handleCompletion(todo._id)} />
+                            <input type="checkbox" onClick={() => handleCompletion(todo._id)} />
 
-                        <Popup trigger={open = (
-                          <div className=" relative h-[20px] w-[5px] m-0  cursor-pointer p-1">
-                            <div className="absolute top-[10%] left-[50%] h-[3px] w-[3px] bg-white rounded-full"></div>
-                            <div className="absolute top-[50%] left-[50%] h-[3px] w-[3px] bg-white rounded-full"></div>
-                            <div className="absolute top-[90%] left-[50%] h-[3px] w-[3px] bg-white rounded-full"></div>
+                            <Popup trigger={open = (
+                              <div className=" relative h-[20px] w-[5px] m-0  cursor-pointer p-1">
+                                <div className="absolute top-[10%] left-[50%] h-[3px] w-[3px] bg-white rounded-full"></div>
+                                <div className="absolute top-[50%] left-[50%] h-[3px] w-[3px] bg-white rounded-full"></div>
+                                <div className="absolute top-[90%] left-[50%] h-[3px] w-[3px] bg-white rounded-full"></div>
+                              </div>
+
+                            )}
+                              position={"bottom center"}
+                              closeOnDocumentClick
+                            >
+                              <ul className="bg-background p-2">
+                                <li className="hover:bg-customPink cursor-pointer text-white p-1 rounded-md text-center" onClick={() => handleDelete(todo._id)}>Delete</li>
+                                <li className="hover:bg-customPink cursor-pointer text-white p-1 rounded-md text-center" onClick={() => {
+                                  setIsEditing(`${todo._id}`);
+                                  setIsAdding(false)
+                                }}>Edit</li>
+                              </ul>
+                            </Popup>
                           </div>
-
-                        )}
-                          position={"bottom center"}
-                          closeOnDocumentClick
-                        >
-                          <ul className="bg-background p-2">
-                            <li className="hover:bg-customPink cursor-pointer text-white p-1 rounded-md text-center" onClick={() => handleDelete(todo._id)}>Delete</li>
-                            <li className="hover:bg-customPink cursor-pointer text-white p-1 rounded-md text-center" onClick={() => {
-                              setIsEditing(`${todo._id}`);
-                              setIsAdding(false)
-                            }}>Edit</li>
-                          </ul>
-                        </Popup>
-                      </div>
+                        </div>
+                      }
                     </div>
-                  }
-                </div>
-              )
-          })}
-        </div>
-      )}
+                    <DragSpot onDrop={() => onTodoDrop(index + 1)} />
+                  </>
+                )
+            })}
+          </div>
+        )}
 
-      {/* if no list */}
+        {/* if no list */}
 
-      {!todoList ||
-        (!isAdding && todoList.length < 1 && (
-          <p className="text-center text-white text-lg p-3 w-full">
-            {currentUser
-              ? "No tasks yet. Add one to get started."
-              : "Please login to add tasks"}
-          </p>
-        ))}
+        {!todoList ||
+          (!isAdding && todoList.length < 1 && (
+            <p className="text-center text-white text-lg p-3 w-full">
+              {currentUser
+                ? "No tasks yet. Add one to get started."
+                : "Please login to add tasks"}
+            </p>
+          ))}
 
-      {/* Add form */}
+        {/* Add form */}
 
-      {isAdding && (<div className="w-[80%] flex justify-start border border-white rounded-lg p-3 m-3">
-        <AddForm currentTodo={null} />
-      </div>)}
+        {isAdding && (<div className="w-[80%] flex justify-start border border-white rounded-lg p-3 m-3">
+          <AddForm currentTodo={null} />
+        </div>)}
 
-      {/* Add '+' button */}
+        {/* Add '+' button */}
 
-      <button
-        className="rounded-full text-background  bg-white cursor-pointer text-2xl text-center flex items-center justify-center absolute bottom-2 right-2"
-        id="addButton"
-        onClick={() => {
-          setIsAdding(true);
-          setIsEditing("");
-        }}
-      >
-        {isAdding ? "" : <span className=" h-10 w-10">+</span>}
-      </button>
+        <button
+          className="rounded-full text-background  bg-white cursor-pointer text-2xl text-center flex items-center justify-center absolute bottom-2 right-2"
+          id="addButton"
+          onClick={() => {
+            setIsAdding(true);
+            setIsEditing("");
+          }}
+        >
+          {isAdding ? "" : <span className=" h-10 w-10">+</span>}
+        </button>
 
-      {/* errors */}
+        {/* errors */}
 
-      {listError && (
-        <p className="text-red-700 text-center w-full">{listError}</p>
-      )}
-    </div>
+        {listError && (
+          <p className="text-red-700 text-center w-full">{listError}</p>
+        )}
+      </div> : null
   );
 };
 
