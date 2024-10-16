@@ -31,7 +31,6 @@ const Todolist = () => {
   };
 
   useEffect(() => {
-    console.log("fetch todolist triggered");
     fetchTodoList();
   }, []);
 
@@ -63,15 +62,17 @@ const Todolist = () => {
     res
       .json()
       .then((response) => {
+        if (response.errorCode === "C4444") {
+
+          setListError("Unauthorized Access");
+          return
+        }
         if (response.success === "false") {
           setListError("Error fetching todolist");
           return
         }
-        console.log(response)
-        console.log('response ok')
         setTodoList(response.list);
         setListError("");
-        console.log(todoList)
         return
       })
       .catch((err) => {
@@ -243,18 +244,26 @@ const Todolist = () => {
   }
 
 
-  const RemainingDays = (date) => {
-    if (date < isoDate)
+  const RemainingDays = (day) => {
+    const date = day.date;
+    console.log(date.substring(9, 10))
+
+    if (Number(date.substring(0, 4)) < Number(isoDate.substring(0, 4)) || Number(date.substring(5, 7)) < Number(isoDate.substring(5, 7)) || Number(date.substring(8, 10)) < Number(isoDate.substring(8, 10)))
       return (<p className="text-red-700">{date}</p>)
-    else if (date = isoDate)
+    else if (date === isoDate)
       return (<p className="text-red-500">0 Days </p>)
     else {
-      if (date.substring(0, 4) !== isoDate.substring(0, 4))
+      if (Number(date.substring(0, 4)) !== Number(isoDate.substring(0, 4)))
         return (<p className="text-green-600">{date}</p>)
-      if (date.substring(6, 2) !== isoDate.substring(0, 7))
+      if (Number(date.substring(5, 7)) !== Number(isoDate.substring(5, 7)))
         return (<p className="text-green-600">{date}</p>)
-      const days = Number(date.substring(9, 2)) - Number(isoDate.substring(9, 2))
-      if (days < 7) {
+      const days = Number(date.substring(8, 10)) - Number(isoDate.substring(8, 10))
+      console.log(days)
+      if (days > 7) {
+        return (<p className="text-green-600">{days} Days </p>)
+      }
+      else if (days < 7 && days > 3) {
+        console.log(yes)
         return (<p className="text-yellow-600">{days} Days </p>)
       }
       else if (days < 3) {
@@ -295,7 +304,7 @@ const Todolist = () => {
                           <h1 className="text-white text-xl  w-[400px]">{todo.task}</h1>
                           <div className="flex gap-4  w-[200px] justify-end">
 
-                            {todo.repeat === "NONE" ? <RemainingDays /> : ""}
+                            {todo.repeat === "NONE" ? <RemainingDays date={todo.deadline.substring(0, 10)} /> : ""}
 
                             <input type="checkbox" onClick={() => handleCompletion(todo._id)} />
 
